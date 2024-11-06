@@ -8,6 +8,9 @@ import java.time.LocalDate;
 
 @Entity
 @Table (name="operation")
+@Inheritance (strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn (name = "Type")
+@DiscriminatorValue("O")
 public class Operation implements Serializable {
 
 
@@ -38,4 +41,5 @@ public class Operation implements Serializable {
         this.motif = motif;
         this.compte = compte;
     }
+
 }

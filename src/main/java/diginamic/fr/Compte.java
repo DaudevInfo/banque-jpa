@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 
 @Entity
+@Inheritance (strategy = InheritanceType.JOINED)
 @Table (name="compte")
 public class Compte implements Serializable {
 
@@ -42,5 +44,17 @@ public class Compte implements Serializable {
         this.solde = solde;
         operations = new HashSet<Operation>();
         clients = new HashSet<Client>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Compte compte)) return false;
+        return Objects.equals(numero, compte.numero);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(numero);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /* Client : permet de gérer les clients de la banque
@@ -43,9 +44,11 @@ public class Client implements Serializable {
                 inverseJoinColumns = @JoinColumn (name= "ID_COMPTE", referencedColumnName = "ID"))
     private Set<Compte> comptes;
 
+    {
+        comptes = new HashSet<Compte>();
+    }
 
     public Client() {
-        comptes = new HashSet<Compte>();
     }
 
     public Client(String nom, String prenom, LocalDate dateNaissance, Adresse adresse , Banque banque) {
@@ -53,8 +56,7 @@ public class Client implements Serializable {
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
         this.adresse = adresse;
-        this.banque = banque;
-        comptes = new HashSet<Compte>();
+        setBanque(banque);
     }
 
     /**
@@ -132,11 +134,15 @@ public class Client implements Serializable {
      * @param : banque
      **/
 
-    public Client setBanque(Banque banque) {
+    public void setBanque(Banque banque) {
+        if (this.banque != null) {
+            this.banque.getClients().remove(this);
+        }
         this.banque = banque;
-        return this;
+        if (this.banque != null) {
+            this.banque.getClients().add(this);
+        }
     }
-
     /**
      * Getter
      *
@@ -155,5 +161,17 @@ public class Client implements Serializable {
     public Client setComptes(Set<Compte> comptes) {
         this.comptes = comptes;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client client)) return false;
+        return Objects.equals(nom, client.nom) && Objects.equals(prenom, client.prenom);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nom, prenom);
     }
 }
